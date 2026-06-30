@@ -1,6 +1,6 @@
 # Relatorio — Pseudo-SO (FSO)
 
-Grupo 09 — Universidade de Brasilia
+Grupo 07 — Universidade de Brasilia
 
 ## 1. Ferramentas e linguagens utilizadas
 
