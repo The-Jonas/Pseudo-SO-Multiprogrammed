@@ -29,5 +29,5 @@ class Processo:
         return self.prioridade == 0
 
     def __repr__(self):
-        """Representacao curta para depuracao."""
+        """Representacao curta para depuração."""
         return f"Processo(pid={self.pid}, prioridade={self.prioridade})"
