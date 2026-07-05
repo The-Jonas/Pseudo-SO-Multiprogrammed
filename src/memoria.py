@@ -21,11 +21,11 @@ class Memoria(GerenciadorMemoria):
     """Gerenciador de memoria virtual paginada do pseudo-SO."""
 
     def __init__(self):
+        """Inicializa os pools de frames e as estruturas de controle por processo."""
         self.frames_livres_rt = FRAMES_TEMPO_REAL
         self.frames_livres_user = FRAMES_USUARIO
 
-        # Estado dos processos ativos.
-        # A lista guarda as paginas do menos recente para o mais recente.
+        # Lista de paginas por processo: do menos recente (indice 0) ao mais recente.
         self.paginas_por_processo = {}
         self.working_set_por_processo = {}
         self.frames_alocados_por_processo = {}
@@ -39,9 +39,9 @@ class Memoria(GerenciadorMemoria):
     def alocar_processo(self, pid, eh_tempo_real, max_working_set):
         """Reserva frames para um processo na area correta.
 
-        Retorna a quantidade de frames alocada quando a alocacao for possivel.
-        Retorna False quando o pedido for invalido ou nao houver frames livres
-        suficientes. A pre-carga e feita no primeiro acesso de pagina.
+        Retorna a quantidade de frames alocada quando bem-sucedido.
+        Retorna False quando o pedido for invalido ou nao houver frames livres.
+        Pre-carga e feita no primeiro acesso de pagina (referenciar_pagina).
         """
         try:
             max_working_set = int(max_working_set)
@@ -51,21 +51,16 @@ class Memoria(GerenciadorMemoria):
         if max_working_set <= 0:
             return False
 
-        # Evita dupla alocacao do mesmo PID.
         if pid in self.frames_alocados_por_processo:
             return self.frames_alocados_por_processo[pid]
 
         if eh_tempo_real:
-            if max_working_set > FRAMES_TEMPO_REAL:
-                return False
-            if self.frames_livres_rt < max_working_set:
+            if max_working_set > FRAMES_TEMPO_REAL or self.frames_livres_rt < max_working_set:
                 return False
             self.frames_livres_rt -= max_working_set
             area = "rt"
         else:
-            if max_working_set > FRAMES_USUARIO:
-                return False
-            if self.frames_livres_user < max_working_set:
+            if max_working_set > FRAMES_USUARIO or self.frames_livres_user < max_working_set:
                 return False
             self.frames_livres_user -= max_working_set
             area = "user"
@@ -80,11 +75,10 @@ class Memoria(GerenciadorMemoria):
         return max_working_set
 
     def referenciar_pagina(self, pid, pagina):
-        """Referencia uma pagina do processo.
+        """Referencia uma pagina do processo aplicando LRU local.
 
-        Retorna True quando ocorre page fault e False quando ocorre hit ou
-        pre-carga. A substituicao e LRU local: somente paginas do proprio
-        processo podem ser removidas.
+        Retorna True quando ocorre page fault, False em caso de hit ou pre-carga.
+        A substituicao e local: somente paginas do proprio processo sao removidas.
         """
         if pid not in self.paginas_por_processo:
             return False
@@ -92,31 +86,30 @@ class Memoria(GerenciadorMemoria):
         paginas = self.paginas_por_processo[pid]
         working_set = self.working_set_por_processo[pid]
 
+        # Pre-carga: primeira referencia nao conta como falta.
         if self.primeira_referencia.get(pid, False):
             self.primeira_referencia[pid] = False
             paginas.append(pagina)
             return False
 
+        # Hit: move para o fim (mais recente) sem contar falta.
         if pagina in paginas:
             paginas.remove(pagina)
             paginas.append(pagina)
             return False
 
+        # Page fault: carrega a pagina, substituindo a menos recente se necessario.
         self.faltas_por_processo[pid] = self.faltas_por_processo.get(pid, 0) + 1
-
         if len(paginas) < working_set:
             paginas.append(pagina)
         else:
-            paginas.pop(0)
+            paginas.pop(0)   # remove o menos recentemente usado (indice 0)
             paginas.append(pagina)
 
         return True
 
     def liberar_processo(self, pid):
-        """Libera os frames reservados pelo processo.
-
-        O historico de faltas de pagina nao e apagado.
-        """
+        """Libera os frames reservados pelo processo. Preserva historico de faltas."""
         if pid not in self.frames_alocados_por_processo:
             return
 
@@ -124,20 +117,16 @@ class Memoria(GerenciadorMemoria):
         area = self.area_por_processo.pop(pid)
 
         if area == "rt":
-            self.frames_livres_rt += frames
-            if self.frames_livres_rt > FRAMES_TEMPO_REAL:
-                self.frames_livres_rt = FRAMES_TEMPO_REAL
+            self.frames_livres_rt = min(self.frames_livres_rt + frames, FRAMES_TEMPO_REAL)
         else:
-            self.frames_livres_user += frames
-            if self.frames_livres_user > FRAMES_USUARIO:
-                self.frames_livres_user = FRAMES_USUARIO
+            self.frames_livres_user = min(self.frames_livres_user + frames, FRAMES_USUARIO)
 
         self.paginas_por_processo.pop(pid, None)
         self.working_set_por_processo.pop(pid, None)
         self.primeira_referencia.pop(pid, None)
 
     def total_faltas(self, pid):
-        """Retorna o total de page faults contabilizados para ``pid``."""
+        """Retorna o total de page faults contabilizados para pid."""
         return self.faltas_por_processo.get(pid, 0)
 
     def total_faltas_por_processo(self):

@@ -1,11 +1,11 @@
-"""Teste isolado do NUCLEO (filas + escalonador).
+"""Teste isolado do NUCLEO (filas + escalonador), dono: voce.
 
 Usa stubs LOCAIS de memoria e E/S definidos aqui dentro, para testar a sua
-parte sem depender da implementacao real. Nao faz parte da entrega
-funcional: e apenas um andaime de desenvolvimento para testes.
+parte sem depender da implementacao real dos colegas. Nao faz parte da entrega
+funcional: e apenas um andaime de desenvolvimento.
 
 Executar da raiz do projeto:
-    python testes/teste_nucleo.py
+    python3 testes/teste_nucleo.py
 """
 
 import sys
