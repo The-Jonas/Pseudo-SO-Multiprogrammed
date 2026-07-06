@@ -7,7 +7,7 @@ Tempo real = prioridade 0. Usuario = prioridades 1 (alta), 2 (media), 3 (baixa).
 from collections import deque
 
 MAX_PROCESSOS = 1000
-LIMIAR_AGING = 5                # ticks de espera antes de promover um processo
+LIMIAR_AGING = 5          # ticks de espera antes de promover um processo
 PRIORIDADES_USUARIO = (1, 2, 3)
 
 
