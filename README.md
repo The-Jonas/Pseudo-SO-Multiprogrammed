@@ -39,13 +39,10 @@ Pseudo-SO/
 │   └── testes/                # Conjuntos de entrada para cenários específicos
 │
 ├── testes/
-│   ├── teste_nucleo.py        # Teste isolado do escalonador com stubs
-│   ├── teste_integracao.py    # Teste completo com gabarito da especificação
-│   └── LEIA_OS_TESTES.md      # Explicação detalhada de cada cenário de teste
-│
-└── docs/
-    ├── relatorio.md           # Rascunho do relatório técnico
-    └── read_me.md             # Passo a passo de execução (versão PDF para entrega)
+    ├── teste_nucleo.py        # Teste isolado do escalonador com stubs
+    ├── teste_integracao.py    # Teste completo com gabarito da especificação
+    └── LEIA_OS_TESTES.md      # Explicação detalhada de cada cenário de teste
+
 ```
 
 ### 📌 Algoritmos e Conceitos Aplicados
