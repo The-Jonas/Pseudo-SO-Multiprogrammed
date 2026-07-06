@@ -33,6 +33,7 @@ class Arquivos(GerenciadorArquivos):
         self.total_blocos = total_blocos
         self.lista_segmentos = []
         self.dono_do_arquivo = {}
+        self.espaco_livre = []
 
         for nome, bloco_inicial, qtd_blocos in segmentos_iniciais:
             nome = nome.strip()
@@ -40,6 +41,8 @@ class Arquivos(GerenciadorArquivos):
                 self.disco[bloco_inicial + i] = nome
             self.dono_do_arquivo[nome] = None 
             self.lista_segmentos.append((nome, bloco_inicial, qtd_blocos))
+        self._blocos_livres()
+
 
 
 
@@ -49,7 +52,7 @@ class Arquivos(GerenciadorArquivos):
             print(f"O processo {pid} não existe.")
             return
 
-        if codigo == 0:
+        if codigo == 0: 
             mensagem = self._criar(pid, nome, blocos)
         else:
             mensagem = self._deletar(pid, eh_tempo_real, nome)
@@ -59,7 +62,7 @@ class Arquivos(GerenciadorArquivos):
 
     def _criar(self, pid, nome, blocos):
         """Tenta alocar 'blocos' contiguos via first-fit. Retorna a mensagem."""
-        for inicio, tamanho in self._blocos_livres():
+        for inicio, tamanho in self.espaco_livre :
             if tamanho >= blocos:
                 for i in range(blocos):
                     self.disco[inicio + i] = nome
@@ -73,7 +76,7 @@ class Arquivos(GerenciadorArquivos):
                 else:
                     parte_inicial = ", ".join(map(str, alocados[:-1]))
                     texto_blocos = f"{parte_inicial} e {alocados[-1]}"
-
+                self._blocos_livres()
                 return f"O processo {pid} criou o arquivo {nome} (blocos {texto_blocos})."
 
         
@@ -93,11 +96,24 @@ class Arquivos(GerenciadorArquivos):
             return (f"O processo {pid} não pode deletar o arquivo {nome} "
                     f"porque não possui essa permissão.")
 
-        for i in range(self.total_blocos):
+        segmento = None
+        inicio = 0
+        tamanho = 0
+        for seg in self.lista_segmentos:
+            if seg[0] == nome: 
+                segmento = seg
+                inicio = segmento[1]
+                tamanho = segmento[2]
+                break
+
+    
+
+        for i in range(inicio, inicio + tamanho):
             if self.disco[i] == nome:
                 self.disco[i] = ""
         del self.dono_do_arquivo[nome]
         self.lista_segmentos = [seg for seg in self.lista_segmentos if seg[0] != nome]
+        self._blocos_livres()
         return f"O processo {pid} deletou o arquivo {nome}."
 
 
@@ -134,5 +150,7 @@ class Arquivos(GerenciadorArquivos):
         if em_sequencia:
             tabela.append((inicio, tamanho))
 
-        return tabela
+
+        self.espaco_livre = tabela
+        return 
 
