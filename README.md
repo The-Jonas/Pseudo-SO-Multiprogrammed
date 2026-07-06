@@ -1,4 +1,4 @@
-# Pseudo-SO
+# Pseudo-SO Multiprogrammed
 
 **Sobre o Projeto**
 
