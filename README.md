@@ -19,7 +19,7 @@ O foco é o entendimento prático de escalonamento de processos, gerência de me
 ## 📁 Estrutura do Projeto
 
 ```text
-Pseudo-SO/
+Pseudo-SO-Multiprogrammed/
 │
 ├── dispatcher.py              # Ponto de entrada — lê os arquivos, orquestra a simulação
 │
