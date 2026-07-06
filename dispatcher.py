@@ -21,7 +21,7 @@ from src.es import ES
 from src.arquivos import Arquivos
 
 
-PASTA_PADRAO = os.path.join(os.path.dirname(__file__), "data")
+PASTA_PADRAO = os.path.join(os.path.dirname(__file__), "entradas")
 
 
 def ler_processos(caminho_processes, caminho_string):
