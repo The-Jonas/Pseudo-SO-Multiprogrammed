@@ -1,5 +1,13 @@
 # Pseudo-SO Multiprogrammed
 
+**Responsáveis** 
+
+João Victor Pereira Vieira    
+Lucas Resende Silveira Reis    
+Rafael Hamú Campos   
+
+------
+
 **Sobre o Projeto**
 
 Este projeto foi desenvolvido para a disciplina de **Fundamentos de Sistemas Operacionais (FSO) da Universidade de Brasília (UnB)** e tem como objetivo implementar um **pseudo-Sistema Operacional multiprogramado**, simulando os principais subsistemas de um SO real por meio de um modelo de execução sequencial determinístico.
