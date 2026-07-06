@@ -110,3 +110,42 @@ O que esse teste valida especificamente:
 - Disco completamente cheio rejeita qualquer criação
 - Usuário não pode deletar arquivos pré-existentes (dono = None)
 - Tempo real pode deletar qualquer arquivo, mesmo pré-existente
+
+---
+
+## Teste 4 — Rejeição por pedido impossível de recursos
+**Arquivos:** `processes_rejeicao.txt`, `files_rejeicao.txt`, `string_rejeicao.txt`
+
+### processes_rejeicao.txt
+```
+0, 1, 2, 3, 3, 0, 0, 0   → P0: usuário prio 1, pede 3 impressoras (só existem 2) → REJEITADO na criação
+0, 1, 2, 3, 1, 0, 0, 0   → P1: usuário prio 1, pede 1 impressora → admitido normalmente
+0, 2, 2, 3, 0, 0, 2, 0   → P2: usuário prio 2, pede 2 modems (só existe 1) → REJEITADO na criação
+```
+
+O que o teste valida:
+- Processo com pedido impossível é rejeitado na criação com mensagem de erro clara
+- O sistema continua funcionando normalmente com os processos válidos
+- Dois tipos de rejeição diferentes: impressora (limite 2, pediu 3) e modem (limite 1, pediu 2)
+
+### files_rejeicao.txt
+```
+4                → disco com 4 blocos
+0                → nenhum arquivo existente
+                 → estado inicial: _ _ _ _
+0, 0, A, 2       → P0 cria A com 2 blocos → first-fit acha blocos 0 e 1 → SUCESSO
+1, 0, B, 2       → P1 cria B com 2 blocos → first-fit acha blocos 2 e 3 → SUCESSO
+```
+
+Nota: P0 foi rejeitado pelo escalonador mas o PID 0 ainda aparece nas operações de arquivo.
+Isso é intencional — a spec não define como tratar operações de arquivo de processos rejeitados,
+e o sistema de arquivos é independente do escalonador.
+
+Mapa final esperado: `A A B B`
+
+### string_rejeicao.txt
+```
+1,2,3   → P0 (rejeitado, nunca executa — 0 faltas)
+4,5,6   → P1 referencia 3 páginas novas com 3 frames = 2 faltas (pré-carga desconta 1)
+7,8,9   → P2 (rejeitado, nunca executa — 0 faltas)
+```
