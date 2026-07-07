@@ -62,7 +62,7 @@ class Escalonador:
             processo.pid, processo.eh_tempo_real, processo.max_working_set
         )
         if frames is False:
-            return False  # sem frames disponiveis agora, tenta no proximo tick
+            return False  
 
         # Tenta alocar recursos de E/S (se o processo precisar de algum)
         pedido = self._montar_pedido(processo)

@@ -30,8 +30,8 @@ class Processo:
         self.req_modem = req_modem
         self.req_sata = req_sata
         self.string_paginas = string_paginas or []
-        self.tempo_espera = 0       # ticks esperando na fila (usado pelo aging)
-        self.ponteiro_pagina = 0    # proxima pagina a referenciar na string
+        self.tempo_espera = 0       
+        self.ponteiro_pagina = 0    
         self.estado = self.ESTADO_NOVO
 
     @property
