@@ -47,10 +47,12 @@ Pseudo-SO-Multiprogrammed/
 │   └── testes/                # Conjuntos de entrada para cenários específicos
 │
 ├── testes/
-    ├── teste_nucleo.py        # Teste isolado do escalonador com stubs
-    ├── teste_integracao.py    # Teste completo com gabarito da especificação
-    └── LEIA_OS_TESTES.md      # Explicação detalhada de cada cenário de teste
-
+│   ├── teste_nucleo.py        # Teste isolado do escalonador com stubs
+│   ├── teste_integracao.py    # Teste completo com gabarito da especificação
+│   └── LEIA_OS_TESTES.md      # Explicação detalhada de cada cenário de teste
+│
+├── Especificacao.pdf          # Especificação inicial do trabalho
+├── Relatorio.pdf              # Relatório pós implementação do trabalho
 ```
 
 ### 📌 Algoritmos e Conceitos Aplicados
